@@ -37,25 +37,55 @@ public class TAmssDiffRow implements Serializable {
     @ApiModelProperty(value = "通行费免收对账批次号")
     private String batchNo;
 
-    /** 原清单行次 */
+    /** 原清单行次（进门照原清单顺次由系统抄入，并笔后认在前头那一个） */
     @TableField("row_no")
     @ApiModelProperty(value = "原清单行次")
     private Integer rowNo;
 
-    /** 差异项代号 */
+    /** 差异项代号（无证通行/证号与机主对不上/未预约通行/一证多车/跨省归属不符，一项一码） */
     @TableField("item_code")
     @ApiModelProperty(value = "差异项代号")
     private String itemCode;
+
+    /** 机台号（同机台同差异并笔的归并依据） */
+    @TableField("machine_no")
+    @ApiModelProperty(value = "机台号")
+    private String machineNo;
 
     /** 本行争议差额(元) */
     @TableField("qty")
     @ApiModelProperty(value = "本行争议差额(元)")
     private BigDecimal qty;
 
+    /** 已核销额(元)，不得大于本行争议差额 */
+    @TableField("writeoff_amt")
+    @ApiModelProperty(value = "已核销额(元)")
+    private BigDecimal writeoffAmt;
+
+    /** 核销凭据号（无凭据不得核销） */
+    @TableField("writeoff_voucher")
+    @ApiModelProperty(value = "核销凭据号")
+    private String writeoffVoucher;
+
+    /** 本行并入的原清单行数（1 表示未并笔） */
+    @TableField("merged_rows")
+    @ApiModelProperty(value = "本行并入的原清单行数")
+    private Integer mergedRows;
+
     /** 行进展 0待核 1已核销 2挂账 */
     @TableField("status")
     @ApiModelProperty(value = "行进展 0待核 1已核销 2挂账")
     private Integer status;
+
+    /** 挂账缘故（一句话只说一件事；挂账后不得再追第二句） */
+    @TableField("hang_reason")
+    @ApiModelProperty(value = "挂账缘故")
+    private String hangReason;
+
+    /** 是否已转历史 0现行 1已转历史（满两个年度转进，现行页不再露） */
+    @TableField("archived")
+    @ApiModelProperty(value = "是否已转历史 0现行 1已转历史")
+    private Integer archived;
 
     /** 删除标记 0正常 1删除 */
     @TableField("del_flag")
@@ -121,6 +151,14 @@ public class TAmssDiffRow implements Serializable {
         this.itemCode = itemCode;
     }
 
+    public String getMachineNo() {
+        return machineNo;
+    }
+
+    public void setMachineNo(String machineNo) {
+        this.machineNo = machineNo;
+    }
+
     public BigDecimal getQty() {
         return qty;
     }
@@ -129,12 +167,52 @@ public class TAmssDiffRow implements Serializable {
         this.qty = qty;
     }
 
+    public BigDecimal getWriteoffAmt() {
+        return writeoffAmt;
+    }
+
+    public void setWriteoffAmt(BigDecimal writeoffAmt) {
+        this.writeoffAmt = writeoffAmt;
+    }
+
+    public String getWriteoffVoucher() {
+        return writeoffVoucher;
+    }
+
+    public void setWriteoffVoucher(String writeoffVoucher) {
+        this.writeoffVoucher = writeoffVoucher;
+    }
+
+    public Integer getMergedRows() {
+        return mergedRows;
+    }
+
+    public void setMergedRows(Integer mergedRows) {
+        this.mergedRows = mergedRows;
+    }
+
     public Integer getStatus() {
         return status;
     }
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getHangReason() {
+        return hangReason;
+    }
+
+    public void setHangReason(String hangReason) {
+        this.hangReason = hangReason;
+    }
+
+    public Integer getArchived() {
+        return archived;
+    }
+
+    public void setArchived(Integer archived) {
+        this.archived = archived;
     }
 
     public Integer getDelFlag() {
