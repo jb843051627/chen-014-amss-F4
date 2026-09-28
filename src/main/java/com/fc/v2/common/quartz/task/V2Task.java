@@ -2,6 +2,7 @@ package com.fc.v2.common.quartz.task;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fc.v2.model.auto.TSysUser;
+import com.fc.v2.service.ITAmssDiffRowService;
 import com.fc.v2.service.ITSysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,9 @@ public class V2Task {
 
 	@Autowired
     private ITSysUserService userService;
+
+    @Autowired
+    private ITAmssDiffRowService amssDiffRowService;
     /**
      * 无参的任务
      */
@@ -39,5 +43,15 @@ public class V2Task {
     	List<TSysUser> list=  userService.selectTSysUserList(new QueryWrapper<TSysUser>());
     	System.err.println("用户查询num："+list.size());
         System.out.println("正在执行定时任务，带多个参数的方法"+a+"   "+b+" "+c+"  "+d+" "+e+"执行时间:"+DateUtil.now());
+    }
+
+    /**
+     * 对账行满两个年度转进历史：转过之后现行页不再露，只留批次号可查。
+     * 调度串：v2Task.archiveAmssDiffRows()
+     */
+    public void archiveAmssDiffRows()
+    {
+        int n = amssDiffRowService.archiveMaturedRows();
+        System.out.println("对账行转历史完成，本次转进"+n+"行，执行时间:"+DateUtil.now());
     }
 }

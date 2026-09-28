@@ -37,10 +37,15 @@ public class TAmssDiffRow implements Serializable {
     @ApiModelProperty(value = "通行费免收对账批次号")
     private String batchNo;
 
-    /** 原清单行次 */
+    /** 原清单行次（进门照原清单顺次抄入，系统落地） */
     @TableField("row_no")
     @ApiModelProperty(value = "原清单行次")
     private Integer rowNo;
+
+    /** 本行机具（车牌/机械）号，同机同类合并以此归并 */
+    @TableField("machine_no")
+    @ApiModelProperty(value = "本行机具(车牌/机械)号")
+    private String machineNo;
 
     /** 差异项代号 */
     @TableField("item_code")
@@ -56,6 +61,32 @@ public class TAmssDiffRow implements Serializable {
     @TableField("status")
     @ApiModelProperty(value = "行进展 0待核 1已核销 2挂账")
     private Integer status;
+
+    /** 本行已核销额(元)，不得大于本行争议差额 */
+    @TableField("writeoff_qty")
+    @ApiModelProperty(value = "本行已核销额(元)")
+    private BigDecimal writeoffQty;
+
+    /** 核销凭据号（核销必带，凭此核销） */
+    @TableField("writeoff_voucher")
+    @ApiModelProperty(value = "核销凭据号")
+    private String writeoffVoucher;
+
+    /** 挂账缘故（一句话只说一件事，不允许追加第二句） */
+    @TableField("suspend_reason")
+    @ApiModelProperty(value = "挂账缘故")
+    private String suspendReason;
+
+    /** 转历史之时；非空即已转入历史，现行页不再露 */
+    @TableField("archive_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @ApiModelProperty(value = "转历史时间")
+    private Date archiveTime;
+
+    /** 本行并入的原清单行数（同机同类合并后>1，回执按它回算原行数） */
+    @TableField("merged_count")
+    @ApiModelProperty(value = "本行并入的原清单行数")
+    private Integer mergedCount;
 
     /** 删除标记 0正常 1删除 */
     @TableField("del_flag")
@@ -135,6 +166,54 @@ public class TAmssDiffRow implements Serializable {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getMachineNo() {
+        return machineNo;
+    }
+
+    public void setMachineNo(String machineNo) {
+        this.machineNo = machineNo;
+    }
+
+    public BigDecimal getWriteoffQty() {
+        return writeoffQty;
+    }
+
+    public void setWriteoffQty(BigDecimal writeoffQty) {
+        this.writeoffQty = writeoffQty;
+    }
+
+    public String getWriteoffVoucher() {
+        return writeoffVoucher;
+    }
+
+    public void setWriteoffVoucher(String writeoffVoucher) {
+        this.writeoffVoucher = writeoffVoucher;
+    }
+
+    public String getSuspendReason() {
+        return suspendReason;
+    }
+
+    public void setSuspendReason(String suspendReason) {
+        this.suspendReason = suspendReason;
+    }
+
+    public Date getArchiveTime() {
+        return archiveTime;
+    }
+
+    public void setArchiveTime(Date archiveTime) {
+        this.archiveTime = archiveTime;
+    }
+
+    public Integer getMergedCount() {
+        return mergedCount;
+    }
+
+    public void setMergedCount(Integer mergedCount) {
+        this.mergedCount = mergedCount;
     }
 
     public Integer getDelFlag() {

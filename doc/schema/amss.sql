@@ -44,17 +44,26 @@ CREATE TABLE IF NOT EXISTS t_amss_coop_doc (
 CREATE TABLE IF NOT EXISTS t_amss_diff_row (
   id bigint NOT NULL COMMENT '主键',
   batch_no varchar(64) DEFAULT NULL COMMENT '通行费免收对账批次号',
-  row_no int DEFAULT NULL COMMENT '原清单行次',
-  item_code varchar(64) DEFAULT NULL COMMENT '差异项代号',
+  row_no int DEFAULT NULL COMMENT '原清单行次（进门照原清单顺次抄入，系统落地）',
+  machine_no varchar(64) DEFAULT NULL COMMENT '本行机具（车牌/机械）号，同机同类合并以此归并',
+  item_code varchar(64) DEFAULT NULL COMMENT '差异项代号 NO_CARD无证通行 MISMATCH证号机主不符 NO_BOOK未预约通行 MULTI_CAR一证多车 CROSS_PROV跨省归属不符',
   qty decimal(12,2) DEFAULT NULL COMMENT '本行争议差额(元)',
   status int DEFAULT NULL COMMENT '行进展 0待核 1已核销 2挂账',
+  writeoff_qty decimal(12,2) DEFAULT NULL COMMENT '本行已核销额(元)，不得大于本行争议差额',
+  writeoff_voucher varchar(255) DEFAULT NULL COMMENT '核销凭据号（核销必带，凭此核销）',
+  suspend_reason varchar(500) DEFAULT NULL COMMENT '挂账缘故（一句话只说一件事，不允许追加第二句）',
+  archive_time datetime DEFAULT NULL COMMENT '转历史之时；非空即已转入历史，现行页不再露',
+  merged_count int DEFAULT '1' COMMENT '本行并入的原清单行数（同机同类合并后>1，回执按它回算原行数）',
   del_flag int DEFAULT '0' COMMENT '删除标记 0正常 1删除',
   create_by varchar(64) DEFAULT NULL COMMENT '创建者',
   create_time datetime DEFAULT NULL COMMENT '创建时间',
   update_by varchar(64) DEFAULT NULL COMMENT '更新者',
   update_time datetime DEFAULT NULL COMMENT '更新时间',
   remark varchar(500) DEFAULT NULL COMMENT '备注',
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_batch_row (batch_no, row_no),
+  KEY idx_batch_item (batch_no, item_code),
+  KEY idx_archive (archive_time)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='通行费免收与作业证发放对账行';
 
 CREATE TABLE IF NOT EXISTS t_amss_duty_task (
